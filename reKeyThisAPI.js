@@ -1,6 +1,6 @@
-// MCINTIRE
-// CS 131 - Discrete Structures
-// Project: Benjamin Moore API
+// Alex McIntire
+
+// Optimizing the Benjamin Moore Paints API to Improve Lookup Time
 
 // In this project, I take the Benjamin Moore Paints API, take it apart,
 // and re-key the nested objects so that when you're searching for a color,
@@ -13,115 +13,104 @@
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-// required to write new API to a JSON file
+// import filesystem to write new API to a JSON file
 const FileSystem = require('fs');
 
-// import API that needs to be re-keyed
+// import the API that needs to be optimized
 const BMcolors = require('./BMcolors.json');
 
-// test - API is importing correctly
+// test - API is importing correctly?
 // console.log(BMcolors);
-// console.log(typeof(BMcolors));
-
-// test - get 1st level of property names
-// console.log(Object.getOwnPropertyNames(BMcolors));
 //for (key in BMcolors) {
-    //key = BMcolors[key].hex;
   //  console.log(`${key}: ${BMcolors[key].name} - ${BMcolors[key].hex}`);
 //}
 
-// create new object (destination object)
-var newBMcolors = {};
+// create new (destination) API object
+let newBMcolors = {};
 
-// loop through each key in the original object to add to new object
-    // destination: newBMcolors
-    // key: each original object's hex value
-    // value: each original object's original value (same as before)
-Object.keys(BMcolors).forEach(el => {
-    // tests
-    // console.log(el, BMcolors[el]);
-    // console.log(BMcolors[el].hex);
+// iterate through the original object and assigned nested objects
+// to the new object
+Object.keys(BMcolors).forEach(el => { 
     Object.assign(newBMcolors, {[BMcolors[el].hex]: BMcolors[el]});
-  });
-
-// create a JSON object with stringify
-const colorData = JSON.stringify(newBMcolors);
-
-// write the new updated API (JSON object) to a file
-FileSystem.writeFile('newBMcolorAPI.json', colorData, (err) => {
-    if (err) {
-        console.log(err);
-        }
-        
-        console.log('New API file saved');
 });
 
-const colorArray = Object.entries(newBMcolors);
-const colorKeys = Object.keys(newBMcolors);
-
-colorArray.sort;
-console.log(colorArray[0]);
-console.log(colorArray[0][0]);
-console.log("There are " + colorArray.length + " colors in the new API");
-
-console.log(colorKeys[0]);
-console.log(colorKeys.includes('EFEEE5'));
-//console.log(colorArray[1]);
-//console.log(colorArray[2]);
-//console.log(colorArray[3]);
-//console.log(colorArray[4]);
-
-// console.log(colorArray);
-
-// test
-//let testAPIcall = fetch('https://www.benjaminmoore.com/api/colors');
-//console.log(testAPIcall);
-
+// test the new API object
 // console.log(newBMcolors);
-var staticIndexVar = 0;
 
-let recursiveFunction = function (arr, x, start, end) {
-    staticIndexVar++;  
+// stringify and write to a JSON file
+const colorData = JSON.stringify(newBMcolors);
 
-    // Base Condition
-    if (start > end) return false;
-  
-    // Find the middle index
-    let mid=Math.floor((start + end)/2);
-    console.log("mid: " + mid);
-  
-    // Compare mid with given key x
-    if (arr[mid]===x) {
-        colorIndex = mid;
-        console.log("mid is: " + mid);
-        return true;
+FileSystem.writeFile('updatedBMcolorsAPI.json', colorData, (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('New API written to file.');
     }
-    // If element at mid is greater than x,
-    // search in the left half of mid
-    if(arr[mid] > x)
-        return recursiveFunction(arr, x, start, mid-1);
-    else
- 
-        // If element at mid is smaller than x,
-        // search in the right half of mid
-        return recursiveFunction(arr, x, mid+1, end);
-}
-  
-// Driver code
-let arr = [1, 3, 5, 7, 8, 9];
-// let x = 'EFEEE5';
-let x = '169928';
-let colorIndex = -1;
-  
-if (recursiveFunction(colorKeys, x, 0, colorKeys.length-1))
-    console.log("Element found at: " + colorIndex);
-else console.log("Element not found!");
-  
+});
 
-console.log(colorArray[colorIndex]);
-console.log(staticIndexVar);
-//x = 6;
-  
-//if (recursiveFunction(arr, x, 0, arr.length-1))
-  //  document.write("Element found!<br>");
-//else document.write("Element not found!<br>");
+
+// testing and searching:
+
+// // create arrays for testing purposes
+// const colorArray = Object.entries(newBMcolors);
+// const colorKeys = Object.keys(newBMcolors);
+
+// // how many colors in the API?
+// // console.log(`There are ${colorArray.length} colors in the Benjamin Moore API.`);
+
+// // finding hexadecimal values with binary search
+// let staticIndexVar = 0;
+
+
+// binary search to find color in the API - O(log n)
+
+// let recursiveBiSearch = function (arr, x, start, end) {
+//     // increment static index variable every time the function is called
+//     staticIndexVar++;
+
+//     // base case
+//     if (start > end) return false;
+
+//     // find the middle index
+//     let mid = Math.floor((start + end) / 2);
+//     console.log("mid: " + mid);
+
+//     // compare the middle value with the given key x
+//     if (arr[mid] === x) {
+//         colorIndex = mid;
+//         return true;
+//     }
+
+//     // if the element at the midpoint is greater than x,
+//     // search in the left half of the array
+//     if (arr[mid] > x) {
+//         return recursiveBiSearch(arr, x, start, mid-1);
+//     } else {
+//         // if the element at the midpoint is less than x,
+//         // search in the right half of the array
+//         return recursiveBiSearch(arr, x, mid+1, end);
+//     }
+// }
+
+// // give a sample value for x
+// // Benjamin Moore 'Dove White'
+// let x = 'EFEEE5';
+
+// // value if x is not found
+// let colorIndex = -1;
+
+// if (recursiveBiSearch(colorKeys, x, 0, colorKeys.length - 1)) {
+//     console.log(`The hexadecimal value ${x} was found in the Benjamin Moore API at index ${colorIndex}`);
+// } else {
+//     console.log('That color was not found in the Benjamin Moore API.');
+// }
+
+// // test our findings
+// console.log(colorArray[colorIndex]);
+// console.log('\nRecursive binary search ran ' + staticIndexVar + ' times.');
+
+// no need to use binary search, because...
+// objects in JavaScript are stored as hash tables
+// lookups on hash tables are O(1)
+console.log(newBMcolors.hasOwnProperty('EFEEE5'));
+console.log(newBMcolors['EFEEE5']);
